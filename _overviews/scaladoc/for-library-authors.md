@@ -94,12 +94,39 @@ include:
 
 
 ### Member grouping tags
+
+These tags are well-suited to larger types or packages, with many members.
+They allow you to organize the Scaladoc page into distinct sections, with
+each one shown separately, in the order that you choose.
+
+These tags are *not* enabled by default! You must pass the `-groups`
+flag to Scaladoc in order to turn them on. Typically the sbt for this
+will look something like:
+```
+scalacOptions in (Compile, doc) ++= Seq(
+  "-groups"
+)
+```
+
+Each section should have a single-word identifier that is used in all of
+these tags, shown as `<group>` below. By default, that identifier is 
+shown as the title of that documentation section, but you can use 
+`@groupname` to provide a longer title.
+
+Typically, you should put `@groupprio` (and optionally `@groupname` and
+`@groupdesc`) in the Scaladoc for the package/trait/class/object itself,
+describing what all the groups are, and their order. Then put `@group` 
+in the Scaladoc for each member, saying which group it is in.
+
+Members that do not have a `@group` tag will be listed as "Ungrouped" in
+the resulting documentation.
+
 - `@group <group>` - mark the entity as a member of the `<group>` group.
 - `@groupname <group> <name>` - provide an optional name for the group. `<name>` is displayed as the group header
--  before the group description.
+  before the group description.
 - `@groupdesc <group> <description>` - add optional descriptive text to display under the group name. Supports multiline
-   formatted text.
-- `@groupprio` <priority> - control the order of the group on the page. Defaults to 0. Ungrouped elements have
+  formatted text.
+- `@groupprio <group> <priority>` - control the order of the group on the page. Defaults to 0. Ungrouped elements have
   an implicit priority of 1000. Use a value between 0 and 999 to set a relative position to other groups. Low values
   will appear before high values.
 
@@ -181,8 +208,28 @@ Some of the standard markup available:
   subheadings. E.g. `=Heading=`, `==Sub-Heading==`, etc.
 - **List blocks** are a sequence of list items with the same style and level,
   with no interruptions from other block styles. Unordered lists can be bulleted
-  using `-`, while numbered lists can be denoted using `1.`, `i.`, `I.`, `a.` for
-  the various numbering styles.
+  using `-`; numbered lists can be denoted using `1.`, `i.`, `I.`, or `a.` for the
+  various numbering styles. In both cases, you must have extra space in front, and
+  more space makes a sub-level. 
+  
+The markup for list blocks looks like:
+
+    /** Here is an unordered list:
+      * 
+      *   - First item
+      *   - Second item
+      *     - Sub-item to the second
+      *     - Another sub-item
+      *   - Third item
+      *
+      * Here is an ordered list:
+      *
+      *   1. First numbered item
+      *   1. Second numbered item
+      *     i. Sub-item to the second
+      *     i. Another sub-item
+      *   1. Third item
+      */
 
 ## General Notes for Writing Scaladoc Comments ##
 

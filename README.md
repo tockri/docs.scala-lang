@@ -12,7 +12,17 @@ To build and view the site locally:
     bundle install
     bundle exec jekyll serve -I
 
+([Trouble on MacOS?](https://github.com/scala/docs.scala-lang/issues/1150))
+
 For more details, read on.
+
+## Quickstart with Docker ##
+
+To build and view site with docker:
+
+    docker-compose up
+
+It will incrementally build and serve site at `http://localhost:8080`
 
 ## Contributing ##
 
