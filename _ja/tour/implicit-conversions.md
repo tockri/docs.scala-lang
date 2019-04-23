@@ -1,6 +1,7 @@
 ---
 layout: tour
-title: Implicit Conversions
+title: 暗黙の変換
+language: ja
 
 discourse: true
 
@@ -13,23 +14,22 @@ previous-page: implicit-parameters
 redirect_from: "/tutorials/tour/implicit-conversions.html"
 ---
 
-An implicit conversion from type `S` to type `T` is defined by an implicit value which has function type `S => T`, or by an implicit method convertible to a value of that type.
+型`S`から型`T`への暗黙の変換は`S => T`という型のimplicit値や、その型に一致するimplicitメソッドで定義されます。
 
-Implicit conversions are applied in two situations:
+暗黙の変換は2つの状況で適用されます。
 
-* If an expression `e` is of type `S`, and `S` does not conform to the expression's expected type `T`.
-* In a selection `e.m` with `e` of type `S`, if the selector `m` does not denote a member of `S`.
+* もし式`e`が型`S`であり、`S`は式の期待する型`T`に適合しない場合
+* 型`S`の`e`を使う表記`e.m`があって、セレクター`m`が`S`のメンバーではない場合
 
-In the first case, a conversion `c` is searched for which is applicable to `e` and whose result type conforms to `T`.
-In the second case, a conversion `c` is searched for which is applicable to `e` and whose result contains a member named `m`.
+最初のケースでは、`e`を渡せて、戻り値の型が`T`に適合するような変換`c`を検索します。
+2つ目のケースでは、`e`を渡せて、戻り値が`m`というメンバーを持つような変換`c`を検索します。
 
-If an implicit method `List[A] => Ordered[List[A]]` is in scope, as well as an implicit method `Int => Ordered[Int]`, the following operation on the two lists of type `List[Int]` is legal:
+implicitなメソッド`List[A] => Ordered[List[A]]`と`Int => Ordered[Int]`がスコープの中にあれば、`List[Int]`型の2つのリストにおける以下の処理は正当なものになります。
 
 ```
 List(1, 2, 3) <= List(4, 5)
 ```
-
-An implicit method `Int => Ordered[Int]` is provided automatically through `scala.Predef.intWrapper`. An example of an implicit method `List[A] => Ordered[List[A]]` is provided below.
+implicitなメソッド`Int => Ordered[Int]`は`scala.Predef.intWrapper`を通じて自動的に提供されます。implicitなメソッドの例`List[A] => Ordered[List[A]]`は以下にあります。
 
 ```tut
 import scala.language.implicitConversions
@@ -41,10 +41,9 @@ implicit def list2ordered[A](x: List[A])
     def compare(that: List[A]): Int = 1
   }
 ```
+暗黙にインポートされているオブジェクト`scala.Predef`は頻繁に使われる型（例えば`scala.collection.immutable.Map`は`Map`と別名づけられます）とメソッド（例えば`assert`）といくつかの暗黙の型変換を宣言しています。
 
-The implicitly imported object `scala.Predef` declares several aliases to frequently used types (e.g. `scala.collection.immutable.Map` is aliased to `Map`) and methods (e.g. `assert`) but also several implicit conversions.
-
-For example, when calling a Java method that expects a `java.lang.Integer`, you are free to pass it a `scala.Int` instead. That's because Predef includes the following implicit conversions:
+例えば、`java.lang.Integer`を受け取るようなJavaのメソッドを呼び出す時、自由に`scala.Int`を代わりに渡すことができます。それはPredefオブジェクトが以下の暗黙の変換をを含んでいるからです。
 
 ```tut
 import scala.language.implicitConversions
@@ -53,11 +52,11 @@ implicit def int2Integer(x: Int) =
   java.lang.Integer.valueOf(x)
 ```
 
-Because implicit conversions can have pitfalls if used indiscriminately the compiler warns when compiling the implicit conversion definition.
+暗黙の変換は無差別に使うと落とし穴になり得るため、暗黙の変換の定義をコンパイルしている時にコンパイラは警告を出します。
 
-To turn off the warnings take either of these actions:
+警告をオフにするには、次のいずれかの操作を行います。
 
-* Import `scala.language.implicitConversions` into the scope of the implicit conversion definition
-* Invoke the compiler with `-language:implicitConversions`
+* 暗黙の変換定義のスコープに`scala.language.implicitConversions`をインポートする。
+* コンパイラを`-language:implicitConversions`をつけて起動する
 
-No warning is emitted when the conversion is applied by the compiler.
+コンパイラにより変換が適用された時、警告は出ません。
