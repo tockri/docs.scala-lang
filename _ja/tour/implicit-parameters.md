@@ -1,6 +1,7 @@
 ---
 layout: tour
-title: Implicit Parameters
+title: 暗黙のパラメータ
+language: ja
 
 discourse: true
 
@@ -13,16 +14,18 @@ previous-page: self-types
 redirect_from: "/tutorials/tour/implicit-parameters.html"
 ---
 
-A method can have an _implicit_ parameter list, marked by the _implicit_ keyword at the start of the parameter list. If the parameters in that parameter list are not passed as usual, Scala will look if it can get an implicit value of the correct type, and if it can, pass it automatically.
+メソッドは _暗黙の_ パラメータのリストを持つことができ、パラメータリストの先頭には_implicit_キーワードで印をつけます。
+もしそのパラメータリストの中のパラメータがいつものように渡らなければ、Scalaは正しい型の暗黙値を受け取ることができるかを確認し、可能であれば自動的に渡します。
 
-The places Scala will look for these parameters fall into two categories:
+Scalaがこれらのパラメータを探す場合は2つのカテゴリに分かれます。
 
-* Scala will first look for implicit definitions and implicit parameters that can be accessed directly (without a prefix) at the point the method with the implicit parameter block is called.
-* Then it looks for members marked implicit in all the companion objects associated with the implicit candidate type.
+* Scalaは暗黙のパラメータブロックを持つメソッドが呼び出されている箇所で、直接(プレフィックスなしに)アクセスできる暗黙の定義と暗黙のパラメータをまず最初に探します。
+* 次に、候補となる型に関連づけられた全てのコンパニオンオブジェクトの中でimplicitと宣言されているメンバーを探します。
 
-A more detailed guide to where scala looks for implicits can be found in [the FAQ](//docs.scala-lang.org/tutorials/FAQ/finding-implicits.html)
+Scalaがimplicitをどこから見つけるかについてのより詳しいガイドは[FAQ](//docs.scala-lang.org/tutorials/FAQ/finding-implicits.html)で見ることができます。
 
-In the following example we define a method `sum` which computes the sum of a list of elements using the monoid's `add` and `unit` operations. Please note that implicit values can not be top-level.
+以下の例では、モノイドの`add`と`unit`の演算を使い、要素のリストの合計を計算するメソッド`sum`を定義しています。
+implicitの値がトップレベルでないことに注意してください。
 
 ```tut
 abstract class Monoid[A] {
@@ -46,27 +49,26 @@ object ImplicitTest {
     else m.add(xs.head, sum(xs.tail))
     
   def main(args: Array[String]): Unit = {
-    println(sum(List(1, 2, 3)))       // uses intMonoid implicitly
-    println(sum(List("a", "b", "c"))) // uses stringMonoid implicitly
+    println(sum(List(1, 2, 3)))       // intMonoidを暗に使用
+    println(sum(List("a", "b", "c"))) // stringMonoidを暗に使用
   }
 }
 ```
+`モノイド`はここでは`add`と呼ばれる処理を定義します。この処理は`A`のペアを結合して、別の`A`を返します。また、(特定の)`A`を作ることができる`unit`と呼ばれる処理も定義します。
 
-`Monoid` defines an operation called `add` here, that combines a pair of `A`s and returns another `A`, together with an operation called `unit` that is able to create some (specific) `A`.
+どのように暗黙のパラメータが動くかを見るには、まずは文字列と整数のためにそれぞれモノイド`stringMonoid`と`intMonoid`を定義します。`implicit`キーワードは対応するオブジェクトは暗黙に使われうることを指し示します。
 
-To show how implicit parameters work, we first define monoids `stringMonoid` and `intMonoid` for strings and integers, respectively. The `implicit` keyword indicates that the corresponding object can be used implicitly.
+メソッド`sum`は`List[A]`を受け取り、`A`を返します。このメソッドは初期値`A`を`unit`から受け取り、リスト中の`A`を順番に`add`メソッドで結合します。ここでパラメータ`m`をimplicitにしているのは、そのメソッドを呼び出すとき、Scalaが暗黙のパラメータ`m`として暗黙の`Monoid[A]`を見つけることができるなら、私達は`xs`パラメータを提供するだけで良いということです。
 
-The method `sum` takes a `List[A]` and returns an `A`, which takes the initial `A` from `unit`, and combines each next `A` in the list to that with the `add` method. Making the parameter `m` implicit here means we only have to provide the `xs` parameter when we call the method if Scala can find a an implict `Monoid[A]` to use for the implicit `m` parameter.
+`main`メソッドでは`sum`を2回呼んでいて、`xs`パラメータだけを与えています。するとScalaは先に言及したスコープの中でimplicitを探します。最初の`sum`の呼び出しは`xs`として`List[Int]`を渡します。それは `A`が`Int`であることを意味します。暗黙のパラメータリスト`m`が省略されているので、Scalaは暗黙の`Monoid[Int]`を探します。最初の探索ルールはこうでした。
 
-In our `main` method we call `sum` twice, and only provide the `xs` parameter. Scala will now look for an implicit in the scope mentioned above. The first call to `sum` passes a `List[Int]` for `xs`, which means that `A` is `Int`. The implicit parameter list with `m` is left out, so Scala will look for an implicit of type `Monoid[Int]`. The first lookup rule reads
+> Scalaは暗黙のパラメータブロックを持つメソッドが呼び出されている箇所で、直接(プレフィックスなしに)アクセスできる暗黙の定義と暗黙のパラメータをまず最初に探します。
 
-> Scala will first look for implicit definitions and implicit parameters that can be accessed directly (without a prefix) at the point the method with the implicit parameter block is called.
+`intMonoid`は`main`の中で直接アクセスできる暗黙の定義です。型も一致しているので、`sum`メソッドに自動的に渡されます。
 
-`intMonoid` is an implicit definition that can be accessed directly in `main`. It is also of the correct type, so it's passed to the `sum` method automatically.
+`sum`の2回目の呼び出しは`List[String]`を渡します。それは`A`は`String`であることを意味します。暗黙の値の探索は`Int`の時と同様に動きますが、今回は `stringMonoid`を見つけ、`m`として自動的に渡します。
 
-The second call to `sum` passes a `List[String]`, which means that `A` is `String`. Implicit lookup will go the same way as with `Int`, but will this time find `stringMonoid`, and passes that automatically as `m`.
-
-The program will output
+そのプログラムは以下を出力します。
 ```
 6
 abc
