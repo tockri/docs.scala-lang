@@ -27,7 +27,7 @@ This table shows the first Scala release in each series that works with each JVM
 
 We recommend using Java 8 for *compiling* Scala code. Since the JVM is backward compatible, it is usually safe to use a newer JVM to *run* your code compiled by the Scala compiler for older JVM versions. There are notable exceptions with experimental/unsafe features, and the introduction of the module system in Java 9. The Scala compiler does usually need updates to run properly on newer versions of the JVM, so make sure to use the appropriate JVM when compiling your code.
 
-We try to provide experimental support for running the Scala compiler on LTS versions of Java ("Long Term Support"; see http://www.oracle.com/technetwork/java/eol-135779.html), and to the extent possible will include the current LTS Java version in our CI matrix and the community build. We will not, a priori, consider non-LTS Java versions. Compiler bugs related to Java versions other than the supported one (Java 8), will be scheduled with lower priority, and will not be considered release blockers. Lightbend does offer commercial support for faster resolution of issues like this.
+We try to provide experimental support for running the Scala compiler on LTS versions of Java ("Long Term Support"; see <http://www.oracle.com/technetwork/java/eol-135779.html>), and to the extent possible will include the current LTS Java version in our CI matrix and the community build. We will not, a priori, consider non-LTS Java versions. Compiler bugs related to Java versions other than the supported one (Java 8), will be scheduled with lower priority, and will not be considered release blockers. Lightbend does offer commercial support for faster resolution of issues like this.
 
 Scala code compiled on Java 8 should run without problems in later JVMs, and we will give higher priority to bugs that break this property. For example, in the 2.13.x series we intend to provide support for JPMS module access checks, to allow ensuring your code won't incur `LinkageErrors` due to module access violations.
 
@@ -56,9 +56,9 @@ To help with testing on JDK 11, see [scala/scala-dev#559](https://github.com/sca
 
 ## JDK 12 compatibility notes
 
-As of February 2019, JDK 12 is not in full release, but early-access builds are available.  Note that even the final JDK 12 release will not be an LTS release, so the remarks above about non-LTS releases apply.
+JDK 12 was released in March 2019.  But it is not an LTS release, so the remarks above about non-LTS releases apply.
 
-Scala has not yet been extensively tested on JDK 12.
+Scala has not been extensively tested on JDK 12.
 
 However, the Scala 2.12 community build is [up and running](https://scala-ci.typesafe.com/view/scala-2.12.x/job/scala-2.12.x-jdk12-integrate-community-build/) on an early-access JDK 12 build, and most projects are green.
 
@@ -67,7 +67,7 @@ Two significant known issues with Scala 2.12.8 on JDK 12 are:
 * the `-release` flag doesn't work ([scala/bug#11403](https://github.com/scala/bug/issues/11403))
 * the optimizer doesn't work ([scala/bug#11372](https://github.com/scala/bug/issues/11372))
 
-Both issues have already been fixed.  The fixes will be included in [Scala 2.12.9](https://github.com/scala/scala/milestone/77).  A release date for 2.12.9 has not been set.  In the meantime, consider using a [Scala nightly build](https://stackoverflow.com/questions/40622878/how-do-i-tell-sbt-to-use-a-nightly-build-of-scala-2-12-or-2-13) to test the fixes.
+Both issues have already been fixed.  The fixes will be included in [Scala 2.12.9](https://github.com/scala/scala/milestone/77).  2.12.9 is tentatively planned for release in June 2019.  In the meantime, consider using a [Scala nightly build](https://stackoverflow.com/questions/40622878/how-do-i-tell-sbt-to-use-a-nightly-build-of-scala-2-12-or-2-13) to test the fixes.
 
 In other respects, so far it appears that 12 is similar to 11 with respect to Scala compatibility.
 
